@@ -22,7 +22,7 @@ while True:
         print(int(x) ** int(y))
 
     else:
-        print("you're input is wrong, try it again")
+        print("your input is wrong, try it again")
 
 
 
