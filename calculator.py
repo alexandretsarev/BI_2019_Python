@@ -41,4 +41,3 @@ while True:
         print("Error! There is no command like this or the command is empty")
         print("Try it again or make the command 'stop' in the next iteration to stop the calculator")
         print("\n\n")
-
