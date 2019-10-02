@@ -1,6 +1,6 @@
 # this function makes a sting from multilayer list
-# then it uploads the modul and use the function to remove some characters
-# like [ and ] from the sting
+# then it uploads the module (re) and use the function "re.sub" to remove some characters
+# like [ and ] from the string
 
 
 def flat_list(your_list):
