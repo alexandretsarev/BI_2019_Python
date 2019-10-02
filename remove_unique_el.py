@@ -10,5 +10,3 @@ def remove_unique_el(your_list):
         else:
             pass
     return list_wo_unique
-
-
