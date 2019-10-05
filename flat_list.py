@@ -1,7 +1,7 @@
 """
 Old function, it makes a string from multilayer list
-then it uploads the module and use the function to remove some characters
-like [ and ] from the string
+then it uploads the module and use the function 
+to remove some characters like [ and ] from the string
 """
 
 import timeit  # to calculate a working time of these functions
@@ -22,7 +22,7 @@ def flat_list(your_list):
 
 
 print("\n\n", a, " <- source multilevel list")
-print(flat_list(a), " <- output of the old function with a module import and re.sub function usage")
+print(flat_list(a), " <- output of the old function")
 
 """
 New version of a function, now with a recursive mechanism of action
@@ -47,4 +47,3 @@ Now I wanna calculate a working time of these two functions just for lulz
 
 print(timeit.timeit(lambda: flat_list(a), number=100000), " time of the old function")
 print(timeit.timeit(lambda: my_fun(a), number=100000), " time of the new function")
-
