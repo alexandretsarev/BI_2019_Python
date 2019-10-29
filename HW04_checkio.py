@@ -7,6 +7,8 @@ def checkio_1(first, second):
     else:
         answer = ",".join(answer)
         return "".join(["\"", answer, "\""])
+
+
 print("########################################################################")
 print("This function searches for common words between two inputed strings")
 print("and returns them in lexicographical order")

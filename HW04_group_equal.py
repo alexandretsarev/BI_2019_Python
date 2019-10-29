@@ -17,4 +17,3 @@ print("This function searches for identical elements coming one after another \n
 print("How to use it?")
 print("print(group_equal([your list here]))")
 print("\n")
-
