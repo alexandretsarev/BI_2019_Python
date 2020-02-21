@@ -11,3 +11,6 @@ https://www.notion.so/Third-Homework-Objects-Functions-Scopes-Collections-e25d07
 
 HW_04 Description:
 https://www.notion.so/Fourth-homework-c8220c51024046ed9e4988e654bd5549
+
+HW_07 and HW_08 Description:
+https://www.notion.so/Eighth-homework-866fedbeb3984ba88445ba9d892f25b1
