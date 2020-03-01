@@ -1,16 +1,13 @@
 #!/usr/bin/env python
 
 import argparse
-import os
-
-
 
 parser = argparse.ArgumentParser(description="This programm can work with .fastq files, it can:\n"
                                              "1) trimm reads by length\n"
                                              "2) trimm reads by GC content (in %)\n"
                                              "3) keep filtered and non-filtered reads")
 parser.add_argument('-i', '--input', metavar='', required=True, help='input fastq file')
-parser.add_argument('-ml', '--min_lenght', type=int, required=False, metavar='',
+parser.add_argument('-l', '--min_lenght', type=int, required=False, metavar='',
                     help='filter by minimal length of the read', default=0)
 parser.add_argument('-gc', '--gc_bounds', nargs='+', required=False, type=int, default=[0, 100],
                     help='percent range of GC content (default: 0,100)', metavar='')
@@ -49,12 +46,8 @@ else:
     valid_path = args.output_basename[0] + "__passed.fastq"
     non_valid_path = args.output_basename[0] + "__failed.fastq"
 
-if os.path.exists(non_valid_path):
-    os.remove(non_valid_path)
-else:
-    None
-
-with open(args.input, 'r') as fastq_data, open(valid_path, 'w') as valid_fq:
+with open(args.input, 'r') as fastq_data, \
+        open(valid_path, 'w') as valid_fq:
     for line in fastq_data:
         seq_id = line.strip()
         sequence = next(fastq_data).strip()
@@ -67,6 +60,3 @@ with open(args.input, 'r') as fastq_data, open(valid_path, 'w') as valid_fq:
             if args.keep_filtered:
                 with open(non_valid_path, 'a') as non_valid_fq:
                     non_valid_fq.writelines([seq_id, '\n', sequence, '\n', descript, '\n', quality, '\n'])
-
-
-
