@@ -15,7 +15,6 @@ parser.add_argument('-gc', '--gc_bounds', nargs='+', required=False, type=int, d
 parser.add_argument('-o', '--output_basename', nargs=1, required=False, type=str, metavar='')
 parser.add_argument('-kf', '--keep_filtered', action="store_true", help='flag which keeps filtered reads in separate '
                                                                         'file')
-
 args = parser.parse_args()
 
 assert args.min_lenght >= 0, "Filter by length can't be less than zero"
