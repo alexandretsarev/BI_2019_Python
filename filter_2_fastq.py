@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
-import os
-
-
+from os import path, remove
 
 parser = argparse.ArgumentParser(description="This programm can work with .fastq files, it can:\n"
                                              "1) trimm reads by length\n"
@@ -49,8 +47,8 @@ else:
     valid_path = args.output_basename[0] + "__passed.fastq"
     non_valid_path = args.output_basename[0] + "__failed.fastq"
 
-if os.path.exists(non_valid_path):
-    os.remove(non_valid_path)
+if path.exists(non_valid_path):
+    remove(non_valid_path)
 else:
     None
 
@@ -67,6 +65,3 @@ with open(args.input, 'r') as fastq_data, open(valid_path, 'w') as valid_fq:
             if args.keep_filtered:
                 with open(non_valid_path, 'a') as non_valid_fq:
                     non_valid_fq.writelines([seq_id, '\n', sequence, '\n', descript, '\n', quality, '\n'])
-
-
-
