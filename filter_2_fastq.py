@@ -13,8 +13,8 @@ parser.add_argument('-ml', '--min_length', type=int, required=False, metavar='',
 parser.add_argument('-gc', '--gc_bounds', nargs='+', required=False, type=int, default=[0, 100],
                     help='percent range of GC content (default: 0,100)', metavar='')
 parser.add_argument('-o', '--output_basename', nargs=1, required=False, type=str, metavar='')
-parser.add_argument('-kf', '--keep_filtered', action="store_true", help='flag which keeps filtered reads in separate '
-                                                                        'file')
+parser.add_argument('-kf', '--keep_filtered', action="store_true", help='flag which keeps filtered'
+                                                                        ' reads in separate file')
 args = parser.parse_args()
 
 assert args.min_length >= 0, "Filter by length can't be less than zero"
