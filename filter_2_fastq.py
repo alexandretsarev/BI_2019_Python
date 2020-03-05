@@ -7,7 +7,7 @@ parser = argparse.ArgumentParser(description="This programm can work with .fastq
                                              "1) trimm reads by length\n"
                                              "2) trimm reads by GC content (in %)\n"
                                              "3) keep filtered and non-filtered reads")
-parser.add_argument('-i', '--input', metavar='', required=True, help='input fastq file')
+parser.add_argument('input',help="input fastq file")
 parser.add_argument('-ml', '--min_length', type=int, required=False, metavar='',
                     help='filter by minimal length of the read', default=0)
 parser.add_argument('-gc', '--gc_bounds', nargs='+', required=False, type=int, default=[0, 100],
@@ -29,7 +29,7 @@ elif len(args.gc_bounds) == 1:
 
 def len_check(seq):
     if len(seq) >= args.min_length:
-        return True
+        return True 
 
 
 def check_gc(seq):
