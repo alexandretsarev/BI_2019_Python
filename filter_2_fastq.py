@@ -28,7 +28,7 @@ elif len(args.gc_bounds) == 1:
 
 
 def len_check(seq):
-    if len(seq) > args.min_length:
+    if len(seq) >= args.min_length:
         return True
 
 
