@@ -62,4 +62,4 @@ with open(args.input, 'r') as fastq_data, open(valid_path, 'w') as valid_fq:
         else:
             if args.keep_filtered:
                 with open(non_valid_path, 'a') as non_valid_fq:
-                    non_valid_fq.writelines([seq_id, '\n', sequence, '\n', descript, '\n', quality, '\n'])
+                    non_valid_fq.writelines([seq_id, '\n', sequence, '\n', description, '\n', quality, '\n'])
