@@ -23,8 +23,7 @@ assert len(args.gc_bounds) in [1, 2], "GC% range has two restrictions: more and 
 if len(args.gc_bounds) == 2:
     assert 0 <= (args.gc_bounds[0] and args.gc_bounds[1]) <= 100, "GC% range must be within 100 %"
 elif len(args.gc_bounds) == 1:
-    assert 0 <= args.gc_bounds[0] <= 100
-    args.gc_bounds[0] <= 100, "GC% range must be within 100 %"
+    assert 0 <= args.gc_bounds[0] <= 100, "GC% range must be within 100 %"
 
 
 def len_check(seq):
