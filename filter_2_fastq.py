@@ -6,11 +6,7 @@ def len_read(seq):
 
 
 def gc_content_count(seq):
-    if len(seq) != 0:
-        gc_content = (seq.count("G") + seq.count("C")) / len(seq) * 100
-        return gc_content
-    else:
-        return 0
+    return (seq.count("G") + seq.count("C")) / len(seq) * 100 if len(seq) != 0 else 0
 
 
 def read_approval(seq, min_len, gc_min, gc_max):
@@ -53,8 +49,7 @@ if __name__ == '__main__':
         valid_path = args.output_basename[0] + "__passed.fastq"
         non_valid_path = args.output_basename[0] + "__failed.fastq"
 
-    if path.exists(non_valid_path):
-        remove(non_valid_path)
+    remove(non_valid_path) if path.exists(non_valid_path) else None
 
     with open(args.input, 'r') as fastq_data, open(valid_path, 'w') as valid_fq:
         for line in fastq_data:
