@@ -14,3 +14,6 @@ https://www.notion.so/Fourth-homework-c8220c51024046ed9e4988e654bd5549
 
 HW_07 and HW_08 Description:
 https://www.notion.so/Eighth-homework-866fedbeb3984ba88445ba9d892f25b1
+
+HW_09 Description:
+https://www.notion.so/1db1dd7e5c044bbaae2686e3e4069b3d?v=b077c58625da4b9eab2cfe1b5b305450&p=26e6d51f07b64362b5b495e9a37fa26a
