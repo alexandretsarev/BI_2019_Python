@@ -94,7 +94,8 @@ if __name__ == '__main__':
     import argparse
     from os import path, remove
 
-    parser = argparse.ArgumentParser(description="programm description")
+    parser = argparse.ArgumentParser(
+        usage='./filter_2_fastq.py example.fastq -ml 20 -gc 12 95 -sw 20 5 -hc 5 -c 25 -kf -stat -o ./trimmed_reads')
     parser.add_argument('input', help="input fastq file")
     parser.add_argument('-ml', '--min_length', type=int, required=False, default=0,
                         help='filter by minimal length of the read')

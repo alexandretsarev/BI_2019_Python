@@ -70,5 +70,9 @@ class FilterTest(unittest.TestCase):
     def test_sliding_window_quality(self):
         self.assertEqual(sliding_window(test_read_1, 38, 5).quality, "GGGGG")
 
+    # TO DO
+    # add some tests for the remained functions
+
+
 if __name__ == '__main__':
     unittest.main()

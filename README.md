@@ -17,3 +17,6 @@ https://www.notion.so/Eighth-homework-866fedbeb3984ba88445ba9d892f25b1
 
 HW_09 Description:
 https://www.notion.so/1db1dd7e5c044bbaae2686e3e4069b3d?v=b077c58625da4b9eab2cfe1b5b305450&p=26e6d51f07b64362b5b495e9a37fa26a
+
+HW_TRIMMER_BEDTOOLS Description
+https://www.notion.so/13th-homework-7afd23ec094e4e5b97549ab45d0c96e6
