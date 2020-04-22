@@ -111,9 +111,10 @@ if __name__ == '__main__':
                         help='cut bases off the end of a read, if below a threshold quality')
     parser.add_argument('-l', '--LEADING', nargs=1, required=False, type=int, metavar='',
                         help='cut bases off the start of a read, if below a threshold quality')
-    parser.add_argument('-s', '--SLIDINGWINDOW', nargs=2, required=False, type=int, metavar='',
-                        help='performs a sliding window trimming approach. It starts scanning at the 5-prime end and '
-                             'clips the read once the average quality within the window falls below a threshold')
+    parser.add_argument('-sw', '--SLIDINGWINDOW', nargs=2, required=False, type=int, metavar='',
+                        help='it takes 2 arguments quality and window size and performs a sliding window trimming '
+                             'approach. It starts scanning at the 5-prime end and clips the read once the average '
+                             'quality within the window falls below a threshold')
     args = parser.parse_args()
 
     assert args.min_length >= 0, "Filter by length can't be less than zero"
@@ -138,9 +139,12 @@ if __name__ == '__main__':
 
     remove(non_valid_path) if path.exists(non_valid_path) else None
 
-    assert args.SLIDINGWINDOW[1] >= 1, "window in SLIDINGWINDOW cannot be less that 1 nucleotide"
-    assert args.TRAILING[0] > 0, "sequence quality cannot be less than 1"
-    assert args.LEADING[0] > 0, "sequence quality cannot be less than 1"
+    if args.SLIDINGWINDOW:
+        assert args.SLIDINGWINDOW[1] >= 1, "window in SLIDINGWINDOW cannot be less that 1 nucleotide"
+    if args.TRAILING:
+        assert args.TRAILING[0] > 0, "sequence quality cannot be less than 1"
+    if args.LEADING:
+        assert args.LEADING[0] > 0, "sequence quality cannot be less than 1"
 
     with open(args.input, 'r') as fastq_data, open(valid_path, 'w') as valid_fq:
 

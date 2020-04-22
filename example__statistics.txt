@@ -1,0 +1,6 @@
+TRIMMER STATISTICS:
+Total number of reads 15
+Total valid reads 9 (60.0%)
+Total failed reads 6 (40.0%)
+Failed by length reads 4 (26.667%)
+Failed by GC-content reads 6 (40.0%)
