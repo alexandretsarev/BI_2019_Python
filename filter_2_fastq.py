@@ -2,9 +2,17 @@
 
 from collections import namedtuple
 
+# CONSTANTS
 # read and read report structures
 Read = namedtuple('read', ['name', 'sequence', 'description', 'quality'])
 Read_report = namedtuple('read_report', ['read_valid', 'length_valid', 'gc_content_valid'])
+
+# summary statistics of the whole fastq file in the beginning
+fastq_statistics = {"n_total": 0,
+                    "n_failed_by_length": 0,
+                    "n_failed_by_gc_content": 0,
+                    "n_failed": 0,
+                    "n_valid": 0}
 
 
 def length_read(input_read):
@@ -150,13 +158,6 @@ if __name__ == '__main__':
     remove(non_valid_path) if path.exists(non_valid_path) else None
 
     with open(args.input, 'r') as fastq_data, open(valid_path, 'w') as valid_fq:
-
-        # summary statistics of the whole fastq file in the beginning
-        fastq_statistics = {"n_total": 0,
-                            "n_failed_by_length": 0,
-                            "n_failed_by_gc_content": 0,
-                            "n_failed": 0,
-                            "n_valid": 0}
 
         for line in fastq_data:
             read = Read(line.strip(), next(fastq_data).strip(), next(fastq_data).strip(), next(fastq_data).strip())
