@@ -106,8 +106,6 @@ class FilterTest(unittest.TestCase):
                          {'n_total': 1, 'n_failed_by_length': 1, 'n_failed_by_gc_content': 1, 'n_failed': 0,
                           'n_valid': 1})
 
-    # TO DO summary statistics function testing
-
 
 if __name__ == '__main__':
     unittest.main()

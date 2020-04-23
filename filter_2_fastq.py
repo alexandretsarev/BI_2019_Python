@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
 from collections import namedtuple
+import argparse
+from os import path, remove
 
-# CONSTANTS
 # read and read report structures
 Read = namedtuple('read', ['name', 'sequence', 'description', 'quality'])
 Read_report = namedtuple('read_report', ['read_valid', 'length_valid', 'gc_content_valid'])
@@ -15,29 +16,29 @@ fastq_statistics = {"n_total": 0,
                     "n_valid": 0}
 
 
-def length_read(input_read: Read):
+def length_read(input_read: Read) -> int:
     return len(input_read.sequence)
 
 
-def gc_content_count(input_read: Read):
-    return (input_read.sequence.count("G") + input_read.sequence.count("C")) / len(input_read.sequence) * 100 \
+def gc_content_count(input_read: Read) -> int:
+    return (input_read.sequence.count('G') + input_read.sequence.count('C')) / len(input_read.sequence) * 100 \
         if len(input_read.sequence) != 0 else 0
 
 
-def crop(inputread: Read, threshold: int):
+def crop(inputread: Read, threshold: int) -> Read:
     return Read(inputread.name, inputread.sequence[:threshold], inputread.description, inputread.quality[:threshold])
 
 
-def headcrop(input_read: Read, threshold: int):
+def headcrop(input_read: Read, threshold: int) -> Read:
     return Read(input_read.name, input_read.sequence[threshold:], input_read.description,
                 input_read.quality[threshold:])
 
 
-def quality_decipher(input_read: Read):
+def quality_decipher(input_read: Read) -> list:
     return list(map(lambda ascii_symbol: ord(ascii_symbol) - 33, input_read.quality))
 
 
-def trailing(input_read: Read, threshold: int):
+def trailing(input_read: Read, threshold: int) -> Read:
     read_quality = quality_decipher(input_read)
     cut_position = next((idx for idx, nucl_quality in enumerate(read_quality) if nucl_quality < threshold), None)
     return Read(input_read.name,
@@ -46,35 +47,35 @@ def trailing(input_read: Read, threshold: int):
                 input_read.quality[:cut_position])
 
 
-def leading(input_read: Read, threshold: int):
+def leading(input_read: Read, threshold: int) -> Read:
     read_quality = quality_decipher(input_read)
-    cut_position = next((idx for idx, nucl_quality in reversed(list(enumerate(read_quality)))
-                         if nucl_quality < threshold), None)
+    cut_position = length_read(input_read) - next((idx + 1 for idx, nucl_quality in enumerate(read_quality[::-1])
+                                                   if nucl_quality < threshold), None)
     return Read(input_read.name,
                 input_read.sequence[cut_position:],
                 input_read.description,
                 input_read.quality[cut_position:])
 
 
-def sliding_window(input_read: Read, threshold: int, window: int):
+def sliding_window(input_read: Read, threshold: int, window_size: int) -> Read:
     read_quality = quality_decipher(input_read)
     cut_position = next(
-        (idx for idx in range(len(read_quality) - window + 1) if
-         sum(read_quality[idx:idx + window]) / window < threshold), None)
+        (idx for idx in range(len(read_quality) - window_size + 1) if
+         sum(read_quality[idx:idx + window_size]) / window_size < threshold), None)
     return Read(input_read.name,
                 input_read.sequence[:cut_position],
                 input_read.description,
                 input_read.quality[:cut_position])
 
 
-def read_approval_report(input_read: Read, min_length: int, gc_min: int, gc_max: int):
+def read_approval_report(input_read: Read, min_length: int, gc_min: int, gc_max: int) -> Read_report:
     length_not_valid = 0 if length_read(input_read) >= min_length else 1
     gc_content_not_valid = 0 if gc_min <= gc_content_count(input_read) <= gc_max else 1
     read_valid = True if length_not_valid == 0 and gc_content_not_valid == 0 else False
     return Read_report(read_valid, length_not_valid, gc_content_not_valid)
 
 
-def update_statistics_per_read(statistics_dict: dict, one_read_report: Read_report):
+def update_statistics_per_read(statistics_dict: dict, one_read_report: Read_report) -> dict:
     statistics_dict['n_total'] += 1
     statistics_dict['n_failed_by_length'] += one_read_report.length_valid
     statistics_dict['n_failed_by_gc_content'] += one_read_report.gc_content_valid
@@ -83,7 +84,7 @@ def update_statistics_per_read(statistics_dict: dict, one_read_report: Read_repo
     return statistics_dict
 
 
-def generate_statistics_summary(statistics_dict: dict):
+def generate_statistics_summary(statistics_dict: dict) -> str:
     proportion_valid = round(statistics_dict["n_valid"] / statistics_dict["n_total"] * 100, 3)
     proportion_failed = round(statistics_dict["n_failed"] / statistics_dict["n_total"] * 100, 3)
     failed_by_length_part = round(
@@ -99,8 +100,6 @@ def generate_statistics_summary(statistics_dict: dict):
 
 
 if __name__ == '__main__':
-    import argparse
-    from os import path, remove
 
     parser = argparse.ArgumentParser(
         usage='./filter_2_fastq.py example.fastq -ml 20 -gc 12 95 -sw 20 5 -hc 5 -c 25 -kf -stat -o '
@@ -149,15 +148,16 @@ if __name__ == '__main__':
 
     # block which creates pathways for output files
     if args.output_basename is None:
-        valid_path = args.input.replace(".fastq", "") + "__passed.fastq"
-        non_valid_path = args.input.replace(".fastq", "") + "__failed.fastq"
-        stat_summary_path = args.input.replace(".fastq", "") + "__statistics.txt"
+        valid_path = args.input.replace(".fastq", "__passed.fastq")
+        non_valid_path = args.input.replace(".fastq", "__failed.fastq")
+        stat_summary_path = args.input.replace(".fastq", "__statistics.txt")
     else:
         valid_path = args.output_basename[0] + "__passed.fastq"
         non_valid_path = args.output_basename[0] + "__failed.fastq"
         stat_summary_path = args.output_basename[0] + "__statistics.txt"
 
     remove(non_valid_path) if path.exists(non_valid_path) else None
+    # I do that because non_valid_path file is open with 'a' mode
 
     with open(args.input, 'r') as fastq_data, open(valid_path, 'w') as valid_fq:
 
