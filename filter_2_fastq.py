@@ -15,29 +15,29 @@ fastq_statistics = {"n_total": 0,
                     "n_valid": 0}
 
 
-def length_read(input_read):
+def length_read(input_read: Read):
     return len(input_read.sequence)
 
 
-def gc_content_count(input_read):
+def gc_content_count(input_read: Read):
     return (input_read.sequence.count("G") + input_read.sequence.count("C")) / len(input_read.sequence) * 100 \
         if len(input_read.sequence) != 0 else 0
 
 
-def crop(inputread, threshold):
+def crop(inputread: Read, threshold: int):
     return Read(inputread.name, inputread.sequence[:threshold], inputread.description, inputread.quality[:threshold])
 
 
-def headcrop(input_read, threshold):
+def headcrop(input_read: Read, threshold: int):
     return Read(input_read.name, input_read.sequence[threshold:], input_read.description,
                 input_read.quality[threshold:])
 
 
-def quality_decipher(input_read):
+def quality_decipher(input_read: Read):
     return list(map(lambda ascii_symbol: ord(ascii_symbol) - 33, input_read.quality))
 
 
-def trailing(input_read, threshold):
+def trailing(input_read: Read, threshold: int):
     read_quality = quality_decipher(input_read)
     cut_position = next((idx for idx, nucl_quality in enumerate(read_quality) if nucl_quality < threshold), None)
     return Read(input_read.name,
@@ -46,7 +46,7 @@ def trailing(input_read, threshold):
                 input_read.quality[:cut_position])
 
 
-def leading(input_read, threshold):
+def leading(input_read: Read, threshold: int):
     read_quality = quality_decipher(input_read)
     cut_position = next((idx for idx, nucl_quality in reversed(list(enumerate(read_quality)))
                          if nucl_quality < threshold), None)
@@ -56,7 +56,7 @@ def leading(input_read, threshold):
                 input_read.quality[cut_position:])
 
 
-def sliding_window(input_read, threshold, window):
+def sliding_window(input_read: Read, threshold: int, window: int):
     read_quality = quality_decipher(input_read)
     cut_position = next(
         (idx for idx in range(len(read_quality) - window + 1) if
@@ -67,14 +67,14 @@ def sliding_window(input_read, threshold, window):
                 input_read.quality[:cut_position])
 
 
-def read_approval_report(input_read, min_length, gc_min, gc_max):
+def read_approval_report(input_read: Read, min_length: int, gc_min: int, gc_max: int):
     length_not_valid = 0 if length_read(input_read) >= min_length else 1
     gc_content_not_valid = 0 if gc_min <= gc_content_count(input_read) <= gc_max else 1
     read_valid = True if length_not_valid == 0 and gc_content_not_valid == 0 else False
     return Read_report(read_valid, length_not_valid, gc_content_not_valid)
 
 
-def update_statistics_per_read(statistics_dict, one_read_report):
+def update_statistics_per_read(statistics_dict: dict, one_read_report: Read_report):
     statistics_dict['n_total'] += 1
     statistics_dict['n_failed_by_length'] += one_read_report.length_valid
     statistics_dict['n_failed_by_gc_content'] += one_read_report.gc_content_valid
@@ -83,7 +83,7 @@ def update_statistics_per_read(statistics_dict, one_read_report):
     return statistics_dict
 
 
-def generate_statistics_summary(statistics_dict):
+def generate_statistics_summary(statistics_dict: dict):
     proportion_valid = round(statistics_dict["n_valid"] / statistics_dict["n_total"] * 100, 3)
     proportion_failed = round(statistics_dict["n_failed"] / statistics_dict["n_total"] * 100, 3)
     failed_by_length_part = round(

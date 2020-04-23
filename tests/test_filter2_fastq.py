@@ -108,5 +108,6 @@ class FilterTest(unittest.TestCase):
 
     # TO DO summary statistics function testing
 
+
 if __name__ == '__main__':
     unittest.main()
