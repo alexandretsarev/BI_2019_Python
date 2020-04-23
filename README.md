@@ -1,7 +1,4 @@
-HW_TRIMMER_BEDTOOLS Homework description
-https://www.notion.so/13th-homework-7afd23ec094e4e5b97549ab45d0c96e6
-
-### fiter_2_fastq.py functions:    
+### filter_2_fastq.py functions:    
 1. to filter by minimal lenght  
 2. to filter by GC-content (by mimial percentage of G/C nucleotides or by interval e.g. 50-70%)  
 3. CROP (Trimmomatic function)  
@@ -10,9 +7,9 @@ https://www.notion.so/13th-homework-7afd23ec094e4e5b97549ab45d0c96e6
 6. LEADING (Trimmomatic function) 
 7. SLIDINGWINDOW (Trimmomatic function)   
 8. to collect statistics after filtering in a separate file  
-  (it adds ""\_\__statistics.txt")  
+  (it adds "\_\__statistics.txt")  
 9. to keep filtered and passed reads in separate files  
-  (it adds "\_\_passed.fastq" and \_\_failed.fastq") to the end of the files respectively   
+  (it adds "\_\_passed.fastq" and "\_\_failed.fastq") to the end of the files respectively   
 
 ### NB!  
 it works only with phred33 quality!  
@@ -48,3 +45,6 @@ optional arguments:
 ```
 ./filter_2_fastq.py example.fastq -ml 20 -gc 12 95 -sw 20 5 -hc 5 -c 25 -kf -stat -o ./path_to_directory/processed_file  
 ```
+
+### Homework  
+https://www.notion.so/13th-homework-7afd23ec094e4e5b97549ab45d0c96e6  
