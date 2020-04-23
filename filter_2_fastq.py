@@ -118,6 +118,7 @@ if __name__ == '__main__':
                              'quality within the window falls below a threshold')
     args = parser.parse_args()
 
+    # assertion block
     assert args.min_length >= 0, "Filter by length can't be less than zero"
     assert len(args.gc_bounds) <= 2, "GC% range has two restrictions: more and less than something" \
                                      " (e.g. -gc 10 50)"
@@ -129,6 +130,14 @@ if __name__ == '__main__':
     gc_min = args.gc_bounds[0] if len(args.gc_bounds) > 0 else 0
     gc_max = args.gc_bounds[1] if len(args.gc_bounds) > 1 else 100
 
+    if args.SLIDINGWINDOW:
+        assert args.SLIDINGWINDOW[1] >= 1, "window in SLIDINGWINDOW cannot be less that 1 nucleotide"
+    if args.TRAILING:
+        assert args.TRAILING[0] > 0, "sequence quality cannot be less than 1"
+    if args.LEADING:
+        assert args.LEADING[0] > 0, "sequence quality cannot be less than 1"
+
+    # block which creates pathways for output files
     if args.output_basename is None:
         valid_path = args.input.replace(".fastq", "") + "__passed.fastq"
         non_valid_path = args.input.replace(".fastq", "") + "__failed.fastq"
@@ -140,16 +149,9 @@ if __name__ == '__main__':
 
     remove(non_valid_path) if path.exists(non_valid_path) else None
 
-    if args.SLIDINGWINDOW:
-        assert args.SLIDINGWINDOW[1] >= 1, "window in SLIDINGWINDOW cannot be less that 1 nucleotide"
-    if args.TRAILING:
-        assert args.TRAILING[0] > 0, "sequence quality cannot be less than 1"
-    if args.LEADING:
-        assert args.LEADING[0] > 0, "sequence quality cannot be less than 1"
-
     with open(args.input, 'r') as fastq_data, open(valid_path, 'w') as valid_fq:
 
-        # summary statistics of the whole fastq file
+        # summary statistics of the whole fastq file in the beginning
         fastq_statistics = {"n_total": 0,
                             "n_failed_by_length": 0,
                             "n_failed_by_gc_content": 0,
@@ -158,6 +160,10 @@ if __name__ == '__main__':
 
         for line in fastq_data:
             read = Read(line.strip(), next(fastq_data).strip(), next(fastq_data).strip(), next(fastq_data).strip())
+
+            # statistics update block
+            read_report = read_approval_report(read, args.min_length, gc_min, gc_max)
+            fastq_statistics = update_statistics_per_read(fastq_statistics, read_report)
 
             # trimmomatic block
             if args.CROP:
@@ -170,10 +176,6 @@ if __name__ == '__main__':
                 read = leading(read, args.LEADING[0])
             if args.SLIDINGWINDOW:
                 read = sliding_window(read, args.SLIDINGWINDOW[0], args.SLIDINGWINDOW[1])
-
-            # statistics update block
-            read_report = read_approval_report(read, args.min_length, gc_min, gc_max)
-            fastq_statistics = update_statistics_per_read(fastq_statistics, read_report)
 
             if read_report.read_valid:
                 valid_fq.writelines([read.name, '\n', read.sequence, '\n', read.description, '\n', read.quality, '\n'])
