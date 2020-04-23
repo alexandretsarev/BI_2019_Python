@@ -91,7 +91,7 @@ def generate_statistics_summary(statistics_dict):
     failed_by_gc_part = round(
         statistics_dict["n_failed_by_gc_content"] / statistics_dict["n_total"] * 100, 3)
 
-    return "\n".join(["TRIMMER STATISTICS:", f"Total number of reads {statistics_dict['n_total']}",
+    return "\n".join(["FILTER STATISTICS:", f"Total number of reads {statistics_dict['n_total']}",
                       f"Total valid reads {statistics_dict['n_valid']} ({proportion_valid}%)",
                       f"Total failed reads {statistics_dict['n_failed']} ({proportion_failed}%)",
                       f"Failed by length reads {statistics_dict['n_failed_by_length']} ({failed_by_length_part}%)",
@@ -103,13 +103,15 @@ if __name__ == '__main__':
     from os import path, remove
 
     parser = argparse.ArgumentParser(
-        usage='./filter_2_fastq.py example.fastq -ml 20 -gc 12 95 -sw 20 5 -hc 5 -c 25 -kf -stat -o ./trimmed_reads')
+        usage='./filter_2_fastq.py example.fastq -ml 20 -gc 12 95 -sw 20 5 -hc 5 -c 25 -kf -stat -o '
+              './path_to_directory/processed_file')
     parser.add_argument('input', help="input fastq file")
     parser.add_argument('-ml', '--min_length', type=int, required=False, default=0,
                         help='filter by minimal length of the read')
     parser.add_argument('-gc', '--gc_bounds', nargs='+', required=False, type=int,
                         help='percent range of GC content', metavar='')
-    parser.add_argument('-o', '--output_basename', nargs=1, required=False, type=str, metavar='')
+    parser.add_argument('-o', '--output_basename', nargs=1, required=False, type=str, metavar='',
+                        help='path to output file')
     parser.add_argument('-kf', '--keep_filtered', action="store_true", help='keep filtered reads in a separate file')
     parser.add_argument('-stat', '--stat_summary', action="store_true", help='keep summary statistics in file')
     parser.add_argument('-c', '--CROP', nargs=1, required=False, type=int, metavar='',
@@ -178,6 +180,7 @@ if __name__ == '__main__':
             if args.SLIDINGWINDOW:
                 read = sliding_window(read, args.SLIDINGWINDOW[0], args.SLIDINGWINDOW[1])
 
+            # read filtering and writing block
             if read_report.read_valid:
                 valid_fq.writelines([read.name, '\n', read.sequence, '\n', read.description, '\n', read.quality, '\n'])
             else:
