@@ -2,7 +2,6 @@
 
 from collections import namedtuple
 
-# CONSTANTS
 # read and read report structures
 Read = namedtuple('read', ['name', 'sequence', 'description', 'quality'])
 Read_report = namedtuple('read_report', ['read_valid', 'length_valid', 'gc_content_valid'])
