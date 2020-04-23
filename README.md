@@ -8,6 +8,14 @@
 7. SLIDINGWINDOW (Trimmomatic function)   
 8. to collect statistics after filtering in a separate file  
   (it adds "\_\__statistics.txt")  
+  
+   FILTER STATISTICS:  
+   Total number of reads 15  
+   Total valid reads 12 (80.0%)  
+   Total failed reads 3 (20.0%)  
+   Failed by length reads 3 (20.0%)  
+   Failed by GC-content reads 0 (0.0%)  
+
 9. to keep filtered and passed reads in separate files  
   (it adds "\_\_passed.fastq" and "\_\_failed.fastq") to the end of the files respectively   
 
