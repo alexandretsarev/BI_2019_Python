@@ -8,7 +8,7 @@ from collections import namedtuple
 
 # named tuples for testing
 Read = namedtuple('read', ['name', 'sequence', 'description', 'quality'])
-Read_report = namedtuple('read_report', ['read_valid', 'length_valid', 'gc_content_valid'])
+ReadReport = namedtuple('read_report', ['read_valid', 'length_valid', 'gc_content_valid'])
 
 # test reads
 test_read_1 = Read("@SRR521461.17063732",
@@ -72,17 +72,17 @@ class FilterTest(unittest.TestCase):
         self.assertEqual(sliding_window(test_read_1, 38, 5).quality, "GGGGG")
 
     def test_read_approval_report_1(self):
-        self.assertEqual(read_approval_report(test_read_1, 3, 1, 50), Read_report(False, True, True))
+        self.assertEqual(read_approval_report(test_read_1, 3, 1, 50), ReadReport(True, False, False))
 
     def test_read_approval_report_2(self):
-        self.assertEqual(read_approval_report(test_read_2, 3, 1, 50), Read_report(True, False, False))
+        self.assertEqual(read_approval_report(test_read_2, 3, 1, 50), ReadReport(False, True, True))
 
     def test_update_statistics_per_read_1(self):
         self.assertEqual(update_statistics_per_read({"n_total": 0,
                                                      "n_failed_by_length": 0,
                                                      "n_failed_by_gc_content": 0,
                                                      "n_failed": 0,
-                                                     "n_valid": 0}, Read_report(True, 0, 0)),
+                                                     "n_valid": 0}, ReadReport(True, 0, 0)),
                          {'n_total': 1, 'n_failed_by_length': 0, 'n_failed_by_gc_content': 0, 'n_failed': 0,
                           'n_valid': 1})
 
@@ -92,7 +92,7 @@ class FilterTest(unittest.TestCase):
                                                      "n_failed_by_gc_content": 0,
                                                      "n_failed": 0,
                                                      "n_valid": 0},
-                                                    Read_report(True, 1, 0)),
+                                                    ReadReport(True, 1, 0)),
                          {'n_total': 1, 'n_failed_by_length': 1, 'n_failed_by_gc_content': 0, 'n_failed': 0,
                           'n_valid': 1})
 
@@ -102,7 +102,7 @@ class FilterTest(unittest.TestCase):
                                                      "n_failed_by_gc_content": 0,
                                                      "n_failed": 0,
                                                      "n_valid": 0},
-                                                    Read_report(True, 1, 1)),
+                                                    ReadReport(True, 1, 1)),
                          {'n_total': 1, 'n_failed_by_length': 1, 'n_failed_by_gc_content': 1, 'n_failed': 0,
                           'n_valid': 1})
 

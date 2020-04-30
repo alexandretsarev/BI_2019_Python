@@ -6,7 +6,7 @@ from os import path, remove
 
 # read and read report structures
 Read = namedtuple('read', ['name', 'sequence', 'description', 'quality'])
-Read_report = namedtuple('read_report', ['read_valid', 'length_valid', 'gc_content_valid'])
+ReadReport = namedtuple('read_report', ['read_valid', 'length_valid', 'gc_content_valid'])
 
 # summary statistics of the whole fastq file in the beginning
 fastq_statistics = {"n_total": 0,
@@ -59,14 +59,14 @@ def sliding_window(input_read: Read, threshold: int, window_size: int) -> Read:
     return crop(input_read, cut_position)
 
 
-def read_approval_report(input_read: Read, min_length: int, gc_min: int, gc_max: int) -> Read_report:
-    length_not_valid = length_read(input_read) >= min_length
-    gc_content_not_valid = gc_min <= gc_content_count(input_read) <= gc_max
+def read_approval_report(input_read: Read, min_length: int, gc_min: int, gc_max: int) -> ReadReport:
+    length_not_valid = length_read(input_read) < min_length
+    gc_content_not_valid = gc_min > gc_content_count(input_read) < gc_max
     read_valid = not length_not_valid and not gc_content_not_valid
-    return Read_report(read_valid, length_not_valid, gc_content_not_valid)
+    return ReadReport(read_valid, length_not_valid, gc_content_not_valid)
 
 
-def update_statistics_per_read(statistics_dict: dict, one_read_report: Read_report) -> dict:
+def update_statistics_per_read(statistics_dict: dict, one_read_report: ReadReport) -> dict:
     statistics_dict['n_total'] += 1
     statistics_dict['n_failed_by_length'] += one_read_report.length_valid
     statistics_dict['n_failed_by_gc_content'] += one_read_report.gc_content_valid
@@ -93,26 +93,25 @@ def generate_statistics_summary(statistics_dict: dict) -> str:
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(
-        usage='./filter_2_fastq.py example.fastq -ml 20 -gc 12 95 -sw 20 5 -hc 5 -c 25 -kf -stat -o '
-              './path_to_directory/processed_file')
+        usage='./filter_2_fastq.py example.fastq --min_length 20 --gc_bounds 12 95 --slidingwindow 20 5 --headcrop 5 '
+              '--crop 25 --keep_filtered --stat_summary  --output_basename ./path_to_directory/processed_file',
+        description='it works only with phred33 quality!',)
     parser.add_argument('input', help="input fastq file")
-    parser.add_argument('-ml', '--min_length', type=int, required=False, default=0,
-                        help='filter by minimal length of the read')
-    parser.add_argument('-gc', '--gc_bounds', nargs='+', required=False, type=int,
-                        help='percent range of GC content', metavar='')
-    parser.add_argument('-o', '--output_basename', nargs=1, required=False, type=str, metavar='',
-                        help='path to output file')
-    parser.add_argument('-kf', '--keep_filtered', action="store_true", help='keep filtered reads in a separate file')
-    parser.add_argument('-stat', '--stat_summary', action="store_true", help='keep summary statistics in file')
-    parser.add_argument('-c', '--CROP', nargs=1, required=False, type=int, metavar='',
+    parser.add_argument('--min_length', type=int, default=0, metavar='', help='minimal length')
+    parser.add_argument('--gc_bounds', nargs='+', type=int, metavar='', help='percent range of GC '
+                                                                                             'content')
+    parser.add_argument('--output_basename', type=str, help='path to output file', metavar='')
+    parser.add_argument('--keep_filtered', action="store_true", help='keep filtered reads in a separate file')
+    parser.add_argument('--stat_summary', action="store_true", help='keep summary statistics in file')
+    parser.add_argument('--crop', nargs=1, type=int, metavar='',
                         help='cut the read to a specified length by removing bases from the end')
-    parser.add_argument('-hc', '--HEADCROP', nargs=1, required=False, type=int, metavar='',
+    parser.add_argument('--headcrop', nargs=1, type=int, metavar='',
                         help='cut the specified number of bases from the start of the read')
-    parser.add_argument('-t', '--TRAILING', nargs=1, required=False, type=int, metavar='',
+    parser.add_argument('--trailing', nargs=1, type=int, metavar='',
                         help='cut bases off the end of a read, if below a threshold quality')
-    parser.add_argument('-l', '--LEADING', nargs=1, required=False, type=int, metavar='',
+    parser.add_argument('--leading', nargs=1, type=int, metavar='',
                         help='cut bases off the start of a read, if below a threshold quality')
-    parser.add_argument('-sw', '--SLIDINGWINDOW', nargs=2, required=False, type=int, metavar='',
+    parser.add_argument('--slidingwindow', nargs=2, type=int, metavar='',
                         help='it takes 2 arguments quality and window size and performs a sliding window trimming '
                              'approach. It starts scanning at the 5-prime end and clips the read once the average '
                              'quality within the window falls below a threshold')
@@ -120,32 +119,42 @@ if __name__ == '__main__':
 
     # assertion block
     assert args.min_length >= 0, "Filter by length can't be less than zero"
-    assert len(args.gc_bounds) <= 2, "GC% range has two restrictions: more and less than something" \
-                                     " (e.g. -gc 10 50)"
-    if len(args.gc_bounds) == 2:
-        assert 0 <= (args.gc_bounds[0] and args.gc_bounds[1]) <= 100, "GC% range must be within 100 %"
+
+    if args.gc_bounds:
+        assert len(args.gc_bounds) <= 2, "GC% range has two restrictions: more and less than something e.g. 10 50)"
+        gc_min = args.gc_bounds[0]
+        if len(args.gc_bounds) == 2:
+            gc_max = args.gc_bounds[1]
+            assert 0 <= (gc_min and gc_max) <= 100, "GC% range must be within 100 %"
+        else:
+            assert 0 <= gc_min <= 100, "GC% range must be within 100 %"
     else:
-        assert 0 <= args.gc_bounds[0] <= 100, "GC% range must be within 100 %"
+        gc_min, gc_max = 0, 100
 
-    gc_min = args.gc_bounds[0] if len(args.gc_bounds) > 0 else 0
-    gc_max = args.gc_bounds[1] if len(args.gc_bounds) > 1 else 100
-
-    if args.SLIDINGWINDOW:
-        assert args.SLIDINGWINDOW[1] >= 1, "window in SLIDINGWINDOW cannot be less that 1 nucleotide"
-    if args.TRAILING:
-        assert args.TRAILING[0] > 0, "sequence quality cannot be less than 1"
-    if args.LEADING:
-        assert args.LEADING[0] > 0, "sequence quality cannot be less than 1"
+    if args.slidingwindow:
+        assert args.slidingwindow[1] >= 1, "window in slidingwindow cannot be less that 1 nucleotide"
+    if args.trailing:
+        assert args.trailing[0] > 0, "sequence quality cannot be less than 1"
+    if args.leading:
+        assert args.leading[0] > 0, "sequence quality cannot be less than 1"
 
     # block which creates pathways for output files
     if args.output_basename is None:
-        valid_path = args.input.replace(".fastq", "__passed.fastq")
-        non_valid_path = args.input.replace(".fastq", "__failed.fastq")
-        stat_summary_path = args.input.replace(".fastq", "__statistics.txt")
+        basename = path.splitext(path.basename(args.input))[0]
     else:
-        valid_path = args.output_basename[0] + "__passed.fastq"
-        non_valid_path = args.output_basename[0] + "__failed.fastq"
-        stat_summary_path = args.output_basename[0] + "__statistics.txt"
+        basename = args.output_basename
+    valid_path = basename + "__passed.fastq"
+    non_valid_path = basename + "__failed.fastq"
+    stat_summary_path = basename + "__statistics.txt"
+
+    # if args.output_basename is None:
+    #     valid_path = args.input.replace(".fastq", "__passed.fastq")
+    #     non_valid_path = args.input.replace(".fastq", "__failed.fastq")
+    #     stat_summary_path = args.input.replace(".fastq", "__statistics.txt")
+    # else:
+    #     valid_path = args.output_basename[0] + "__passed.fastq"
+    #     non_valid_path = args.output_basename[0] + "__failed.fastq"
+    #     stat_summary_path = args.output_basename[0] + "__statistics.txt"
 
     remove(non_valid_path) if path.exists(non_valid_path) else None
     # I do that because non_valid_path file is open with 'a' mode
@@ -160,16 +169,16 @@ if __name__ == '__main__':
             fastq_statistics = update_statistics_per_read(fastq_statistics, read_report)
 
             # trimmomatic block
-            if args.CROP:
-                read = crop(read, args.CROP[0])
-            if args.HEADCROP:
-                read = headcrop(read, args.HEADCROP[0])
-            if args.TRAILING:
-                read = trailing(read, args.TRAILING[0])
-            if args.LEADING:
-                read = leading(read, args.LEADING[0])
-            if args.SLIDINGWINDOW:
-                read = sliding_window(read, args.SLIDINGWINDOW[0], args.SLIDINGWINDOW[1])
+            if args.crop:
+                read = crop(read, args.crop[0])
+            if args.headcrop:
+                read = headcrop(read, args.crop[0])
+            if args.trailing:
+                read = trailing(read, args.trailing[0])
+            if args.leading:
+                read = leading(read, args.leading[0])
+            if args.slidingwindow:
+                read = sliding_window(read, args.slidingwindow[0], args.slidingwindow[1])
 
             # read filtering and writing block
             if read_report.read_valid:
