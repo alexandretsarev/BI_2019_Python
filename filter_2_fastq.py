@@ -95,11 +95,11 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         usage='./filter_2_fastq.py example.fastq --min_length 20 --gc_bounds 12 95 --slidingwindow 20 5 --headcrop 5 '
               '--crop 25 --keep_filtered --stat_summary  --output_basename ./path_to_directory/processed_file',
-        description='it works only with phred33 quality!',)
+        description='it works only with phred33 quality!', )
     parser.add_argument('input', help="input fastq file")
     parser.add_argument('--min_length', type=int, default=0, metavar='', help='minimal length')
     parser.add_argument('--gc_bounds', nargs='+', type=int, metavar='', help='percent range of GC '
-                                                                                             'content')
+                                                                             'content')
     parser.add_argument('--output_basename', type=str, help='path to output file', metavar='')
     parser.add_argument('--keep_filtered', action="store_true", help='keep filtered reads in a separate file')
     parser.add_argument('--stat_summary', action="store_true", help='keep summary statistics in file')
@@ -146,15 +146,6 @@ if __name__ == '__main__':
     valid_path = basename + "__passed.fastq"
     non_valid_path = basename + "__failed.fastq"
     stat_summary_path = basename + "__statistics.txt"
-
-    # if args.output_basename is None:
-    #     valid_path = args.input.replace(".fastq", "__passed.fastq")
-    #     non_valid_path = args.input.replace(".fastq", "__failed.fastq")
-    #     stat_summary_path = args.input.replace(".fastq", "__statistics.txt")
-    # else:
-    #     valid_path = args.output_basename[0] + "__passed.fastq"
-    #     non_valid_path = args.output_basename[0] + "__failed.fastq"
-    #     stat_summary_path = args.output_basename[0] + "__statistics.txt"
 
     remove(non_valid_path) if path.exists(non_valid_path) else None
     # I do that because non_valid_path file is open with 'a' mode
