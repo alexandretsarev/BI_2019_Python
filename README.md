@@ -1,13 +1,12 @@
 ### filter_2_fastq.py functions:    
-1. to filter by minimal lenght  
+1. to filter by minimal length  
 2. to filter by GC-content (by mimial percentage of G/C nucleotides or by interval e.g. 50-70%)  
 3. crop (Trimmomatic function)  
-4. headcrop (Trimmomatic function) 
-5. trailing (Trimmomatic function) 
-6. leading (Trimmomatic function) 
-7. slidingwindow (Trimmomatic function)   
-8. to collect statistics after filtering in a separate file  
-  ("*\_\__statistics.txt")  
+4. headcrop (Trimmomatic function)   
+5. trailing (Trimmomatic function)    
+6. leading (Trimmomatic function)   
+7. slidingwindow (Trimmomatic function)     
+8. to collect statistics after filtering in a separate file (\*\_\__statistics.txt)  
   
    FILTER STATISTICS:  
    Total number of reads 15  
@@ -16,8 +15,7 @@
    Failed by length reads 3 (20.0%)  
    Failed by GC-content reads 0 (0.0%)  
 
-9. to keep filtered and passed reads in separate files  
-  ("*\_\_passed.fastq" and "*\_\_failed.fastq")  
+9. to keep filtered and passed reads in separate files (\*\_\_passed.fastq" and "\*\_\_failed.fastq)  
 
 ### NB!  
 it works only with phred33 quality!  
@@ -41,9 +39,6 @@ optional arguments:
   --slidingwindow      it takes 2 arguments quality and window size and performs a sliding 
                        window trimming approach; it starts scanning at the 5'-end and clips 
                        the read once the average quality within the window falls below a threshold  
-
-
-
 ```
 ### Example usage  
 
