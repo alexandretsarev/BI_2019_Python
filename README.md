@@ -48,7 +48,7 @@ optional arguments:
 ### Example usage  
 
 ```
-./filter_2_fastq.py example.fastq --min_length 20 --gc_bounds 12 95 --slidingwindow 20 5 --headcrop 5 --crop 25 --keep_filtered --stat_summary  --output_basename ./path_to_directory/processed_file 
+./filter_2_fastq.py example.fastq --min_length 20 --gc_bounds 12 95 --slidingwindow 20 5 --headcrop 5 --crop 25 --keep_filtered --stat_summary  --output_basename path_to_directory/processed_file 
 ```
 
 ### Homework source
