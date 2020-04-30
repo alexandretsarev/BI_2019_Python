@@ -1,6 +1,6 @@
 ### filter_2_fastq.py functions:    
 1. to filter by minimal length  
-2. to filter by GC-content (by mimial percentage of G/C nucleotides or by interval e.g. 50-70%)  
+2. to filter by GC-content (by minimal percentage of G/C nucleotides or by interval e.g. 50-70%)  
 3. crop (Trimmomatic function)  
 4. headcrop (Trimmomatic function)   
 5. trailing (Trimmomatic function)    
