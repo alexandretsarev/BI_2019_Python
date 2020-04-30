@@ -15,7 +15,7 @@
    Failed by length reads 3 (20.0%)  
    Failed by GC-content reads 0 (0.0%)  
 
-9. to keep filtered and passed reads in separate files (\*\_\_passed.fastq" and "\*\_\_failed.fastq)  
+9. to keep filtered and passed reads in separate files (\*\_\_passed.fastq" and \*\_\_failed.fastq)  
 
 ### NB!  
 it works only with phred33 quality!  
