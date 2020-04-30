@@ -72,10 +72,10 @@ class FilterTest(unittest.TestCase):
         self.assertEqual(sliding_window(test_read_1, 38, 5).quality, "GGGGG")
 
     def test_read_approval_report_1(self):
-        self.assertEqual(read_approval_report(test_read_1, 3, 1, 50), Read_report(True, 0, 0))
+        self.assertEqual(read_approval_report(test_read_1, 3, 1, 50), Read_report(False, True, True))
 
     def test_read_approval_report_2(self):
-        self.assertEqual(read_approval_report(test_read_2, 3, 1, 50), Read_report(False, 1, 1))
+        self.assertEqual(read_approval_report(test_read_2, 3, 1, 50), Read_report(True, False, False))
 
     def test_update_statistics_per_read_1(self):
         self.assertEqual(update_statistics_per_read({"n_total": 0,

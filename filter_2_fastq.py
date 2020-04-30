@@ -41,20 +41,14 @@ def quality_decipher(input_read: Read) -> list:
 def trailing(input_read: Read, threshold: int) -> Read:
     read_quality = quality_decipher(input_read)
     cut_position = next((idx for idx, nucl_quality in enumerate(read_quality) if nucl_quality < threshold), None)
-    return Read(input_read.name,
-                input_read.sequence[:cut_position],
-                input_read.description,
-                input_read.quality[:cut_position])
+    return crop(input_read, cut_position)
 
 
 def leading(input_read: Read, threshold: int) -> Read:
     read_quality = quality_decipher(input_read)
     cut_position = length_read(input_read) - next((idx + 1 for idx, nucl_quality in enumerate(read_quality[::-1])
                                                    if nucl_quality < threshold), None)
-    return Read(input_read.name,
-                input_read.sequence[cut_position:],
-                input_read.description,
-                input_read.quality[cut_position:])
+    return headcrop(input_read, cut_position)
 
 
 def sliding_window(input_read: Read, threshold: int, window_size: int) -> Read:
@@ -62,16 +56,13 @@ def sliding_window(input_read: Read, threshold: int, window_size: int) -> Read:
     cut_position = next(
         (idx for idx in range(len(read_quality) - window_size + 1) if
          sum(read_quality[idx:idx + window_size]) / window_size < threshold), None)
-    return Read(input_read.name,
-                input_read.sequence[:cut_position],
-                input_read.description,
-                input_read.quality[:cut_position])
+    return crop(input_read, cut_position)
 
 
 def read_approval_report(input_read: Read, min_length: int, gc_min: int, gc_max: int) -> Read_report:
-    length_not_valid = 0 if length_read(input_read) >= min_length else 1
-    gc_content_not_valid = 0 if gc_min <= gc_content_count(input_read) <= gc_max else 1
-    read_valid = True if length_not_valid == 0 and gc_content_not_valid == 0 else False
+    length_not_valid = length_read(input_read) >= min_length
+    gc_content_not_valid = gc_min <= gc_content_count(input_read) <= gc_max
+    read_valid = not length_not_valid and not gc_content_not_valid
     return Read_report(read_valid, length_not_valid, gc_content_not_valid)
 
 
