@@ -95,7 +95,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         usage='./filter_2_fastq.py example.fastq --min_length 20 --gc_bounds 12 95 --slidingwindow 20 5 --headcrop 5 '
               '--crop 25 --keep_filtered --stat_summary  --output_basename ./path_to_directory/processed_file',
-        description='it works only with phred33 quality!', )
+        description='it works only with phred33 quality!')
     parser.add_argument('input', help="input fastq file")
     parser.add_argument('--min_length', type=int, default=0, metavar='', help='minimal length')
     parser.add_argument('--gc_bounds', nargs='+', type=int, metavar='', help='percent range of GC '
